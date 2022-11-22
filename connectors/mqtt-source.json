@@ -1,0 +1,13 @@
+{
+    "name": "mqtt-source",
+    "config": {
+        "connector.class": "MqttSource",
+        "name": "mqtt-source",
+        "kafka.topic": "bus_raw_all",
+        "mqtt.server.uri": "tcp://mqtt.hsl.fi:1883",
+        "mqtt.clean.session.enabled": "false",
+        "mqtt.topics": "/hfp/v2/journey/ongoing/vp/bus/#",
+        "tasks.max": "1",
+        "confluent.topic.bootstrap.servers": "broker:9092"
+    }
+}
