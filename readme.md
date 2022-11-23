@@ -51,11 +51,11 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
     confluent-hub install confluentinc/kafka-connect-jdbc:10.6.0 --component-dir confluent-hub-components
     confluent-hub install jcustenborder/kafka-connect-redis:0.0.4 --component-dir confluent-hub-components
 
-    # create source topic and license topic
-    kafka-topics --bootstrap-server broker:9092 --create --topic _confluent-command --partitions 3 --replication-factor 1
-
     # start services
     docker-compose up -d
+
+    # create source topic and license topic
+    kafka-topics --bootstrap-server broker:9092 --create --topic _confluent-command --partitions 3 --replication-factor 1
     ```
 ### 2. Source data into Kafka
     ```
@@ -104,7 +104,7 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
     ```
 
 ## Todo:
-- [ ] API behaviors when ksqlDB rebalance
+- [ ] API behaviors when ksqlDB server down
 
 ## References:
 - [Confluent Course: KSQLDB 101](https://developer.confluent.io/learn-kafka/ksqldb/intro/)
