@@ -18,7 +18,7 @@ app.add_middleware(
 
 
 @app.get("/redis")
-async def location_redis():
+async def location_redis(veh_id='*'):
     """
     An API demo how to query latest position from redis.
     :return:
@@ -31,7 +31,7 @@ async def location_redis():
         db=1)
 
     # get data from redis
-    keys = r.keys('*')
+    keys = r.keys(veh_id)
     values = r.mget(keys)
 
     # current location data
@@ -49,7 +49,7 @@ async def location_redis():
 
 
 @app.get("/ksqldb")
-async def location_ksqldb():
+async def location_ksqldb(server='ksqldb-server', veh_id='*'):
     """
     An API demo how to query latest position from ksqlDB directly.
     :return:
@@ -58,17 +58,22 @@ async def location_ksqldb():
     # send request to ksqldb using rest api
     # https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/query-endpoint/
     resp = requests.post(
-        'http://ksqldb-server:8088/query',
+        f'http://{server}:8088/query',
         headers={"Accept": "application/vnd.ksql.v1+json"},
         data=json.dumps(
             {
-                'ksql': 'select * from bus_current;',
-                'streamsProperties': {}
+                'ksql':
+                    f'select * from bus_current;' if veh_id == '*' else
+                    f'select * from bus_current where veh_id={veh_id};',
+                'streamsProperties': {
+                    # https://docs.ksqldb.io/en/latest/operate-and-deploy/high-availability-pull-queries/
+                    'ksql.query.pull.max.allowed.offset.lag': '100'
+                }
             })).json()
 
     locations = [
         {
-            'veh_id': data['row']['columns'][0],
+            'veh_id': str(data['row']['columns'][0]),
             'loc': data['row']['columns'][1]
         } for data in resp[1:]]  # resp[1:] to skip headers
     locations.sort(key=lambda x: x['veh_id'])
@@ -80,7 +85,7 @@ async def location_ksqldb():
 
 
 @app.get("/ksqldb-push")
-async def location_ksqldb_push():
+async def location_ksqldb_push(server='ksqldb-server', veh_id='*'):
     """
     An API demo how to push query position changes from ksqlDB directly.
 
@@ -96,12 +101,16 @@ async def location_ksqldb_push():
     """
 
     def get_streaming_data():
+        nonlocal server, veh_id
+
         with requests.post(
-                'http://ksqldb-server:8088/query-stream',
+                f'http://{server}:8088/query-stream',
                 stream=True,
                 data=json.dumps(
                     {
-                        'sql': 'select * from bus_current emit changes;',
+                        'sql':
+                            f'select * from bus_current emit changes;' if veh_id == '*' else
+                            f'select * from bus_current where veh_id = {veh_id} emit changes;',
                         'streamsProperties': {}
                     })) as r:
             for chunk in r.iter_content(chunk_size=1024 * 8):
@@ -114,7 +123,7 @@ async def location_ksqldb_push():
                     continue
 
                 veh_id, loc = json.loads(chunk)
-                yield f"{json.dumps({'veh_id': veh_id, 'loc': loc})}\n"
+                yield f"{json.dumps({'veh_id': str(veh_id), 'loc': loc})}\n"
 
     return StreamingResponse(content=get_streaming_data())
 

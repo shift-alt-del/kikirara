@@ -109,6 +109,10 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
   - http://localhost:8000/redis
   - http://localhost:8000/ksqldb (pull query)
   - http://localhost:8000/ksqldb-push (push query)
+
+  API swagger doc:
+  - http://localhost:8000/docs
+
 ### 7. Finish
 
   ```
