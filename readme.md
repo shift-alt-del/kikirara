@@ -1,4 +1,4 @@
-# KikiRara
+# StreamingService 101
 
 Use ksqlDB to bring realtime data to your project.
 
@@ -53,6 +53,9 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
     # create source topic and license topic
     kafka-topics --bootstrap-server broker:9092 --create --topic _confluent-command --partitions 3 --replication-factor 1
+
+    # start services
+    docker-compose up -d
     ```
 ### 2. Source data into Kafka
     ```
@@ -96,6 +99,9 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
     - http://localhost:8000/ksqldb (pull query)
     - http://localhost:8000/ksqldb-push (push query)
 ### 7. Finish
+    ```
+    docker-compose down -v
+    ```
 
 ## Todo:
 - [ ] API behaviors when ksqlDB rebalance
