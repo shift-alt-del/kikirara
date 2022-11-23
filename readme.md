@@ -53,9 +53,6 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
     # start services
     docker-compose up -d
-
-    # create source topic and license topic
-    kafka-topics --bootstrap-server broker:9092 --create --topic _confluent-command --partitions 3 --replication-factor 1
     ```
 ### 2. Source data into Kafka
     ```

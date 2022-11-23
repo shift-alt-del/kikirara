@@ -86,7 +86,7 @@ async def location_ksqldb_push():
 
     How to run push query against ksqldb server:
     https://docs.ksqldb.io/en/latest/developer-guide/ksqldb-rest-api/streaming-endpoint/
-    
+
     curl -X "POST" "http://ksqldb-server:8088/query-stream" \
         -d $'{
       "sql": "SELECT * FROM bus_current EMIT CHANGES;",
