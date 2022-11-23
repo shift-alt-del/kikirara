@@ -197,5 +197,17 @@ services:
     networks:
       - demonetwork
 
+  realtime-web-api:
+    image: demo/realtime-web-api
+    build: ./web_api
+    ports:
+      - "8000:8000"
+    container_name: realtime-web-api
+    command: python3 api.py
+    volumes:
+      - ./web_api/:/app
+    networks:
+      - demonetwork
+
 networks:
   demonetwork:

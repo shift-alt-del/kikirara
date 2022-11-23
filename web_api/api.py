@@ -25,7 +25,7 @@ async def location_redis():
     """
     # https://docs.redis.com/latest/rs/references/client_references/client_python/
     r = redis.Redis(
-        host='localhost',
+        host='redis',
         port='6379',
         password='xxxxxxxx',
         db=1)

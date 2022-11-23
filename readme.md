@@ -44,64 +44,76 @@ A lot of new Database technologies, this table will highlight the key difference
 Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-api/vehicle-positions/) for demo.
 
 ### 1. Prerequisite
-    ```
-    # install connector plugins
-    mkdir -p confluent-hub-components
-    confluent-hub install confluentinc/kafka-connect-mqtt:latest --component-dir confluent-hub-components
-    confluent-hub install confluentinc/kafka-connect-jdbc:10.6.0 --component-dir confluent-hub-components
-    confluent-hub install jcustenborder/kafka-connect-redis:0.0.4 --component-dir confluent-hub-components
 
-    # start services
-    docker-compose up -d
-    ```
+  Check `./docker-compose.yml`
+
+  ```
+  # install connector plugins
+  mkdir -p confluent-hub-components
+  confluent-hub install confluentinc/kafka-connect-mqtt:latest --component-dir confluent-hub-components
+  confluent-hub install confluentinc/kafka-connect-jdbc:10.6.0 --component-dir confluent-hub-components
+  confluent-hub install jcustenborder/kafka-connect-redis:0.0.4 --component-dir confluent-hub-components
+
+  # start services
+  docker-compose up -d
+  ```
 ### 2. Source data into Kafka
-    ```
-    # create mqtt source connector
-    curl -X POST http://localhost:8083/connectors \
-      -H 'Content-Type: application/json' \
-      -H 'Accept: application/json' \
-      --data "@./connectors/mqtt-source.json" | jq
 
-    # show connector status
-    curl -X GET http://localhost:8083/connectors/mqtt-source/status | jq
-    ```
+  Check `./connectors/mqtt-source.json`
+
+  ```
+  # create mqtt source connector
+  curl -X POST http://localhost:8083/connectors \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    --data "@./connectors/mqtt-source.json" | jq
+
+  # show connector status
+  curl -X GET http://localhost:8083/connectors/mqtt-source/status | jq
+  ```
 ### 3. Create stream in ksqlDB
-    ```
-    docker exec -it ksqldb-cli ksql http://ksqldb-server:8088 -f /ksqldb/create_stream.sql
-    ```
-### 4. Create table in ksqlDB to calculate latest position.
-    ```
-    docker exec -it ksqldb-cli ksql http://ksqldb-server:8088 -f /ksqldb/create_table_bus_current.sql
-    ```
-### 5. Sink connector.
-    ```
-    # create recis sink connector
-    curl -X POST http://localhost:8083/connectors \
-      -H 'Content-Type: application/json' \
-      -H 'Accept: application/json' \
-      --data "@./connectors/redis-sink.json" | jq
-
-    # show connector status
-    curl -X GET http://localhost:8083/connectors/redis-sink/status | jq
-    ```
-### 6. API demo
-    ```
-    cd web_api
     
-    # start fast API server.
-    python api.py
-    ```
-    There are 3 endpoints available from this python server.
-    - http://localhost:8000/redis
-    - http://localhost:8000/ksqldb (pull query)
-    - http://localhost:8000/ksqldb-push (push query)
-### 7. Finish
-    ```
-    docker-compose down -v
-    ```
+  Check `./ksqldb/create_stream.sql`
 
-## Todo:
-- [ ] API behaviors when ksqlDB server down
+  ```
+  docker exec -it ksqldb-cli ksql http://ksqldb-server:8088 -f /ksqldb/create_stream.sql
+  ```
+### 4. Create table in ksqlDB to calculate latest position.
+
+  Check `./ksqldb/create_table_bus_current.sql`
+
+  ```
+  docker exec -it ksqldb-cli ksql http://ksqldb-server:8088 -f /ksqldb/create_table_bus_current.sql
+  ```
+### 5. Sink connector.
+
+  Check `./connectors/redis-sink.json`
+
+  ```
+  # create recis sink connector
+  curl -X POST http://localhost:8083/connectors \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    --data "@./connectors/redis-sink.json" | jq
+
+  # show connector status
+  curl -X GET http://localhost:8083/connectors/redis-sink/status | jq
+  ```
+### 6. API demo
+    
+  Check inside `./web_api/api.py`.
+
+  The API deployment runs in debug mode, for production deployment please refer to [this Fast API document](https://fastapi.tiangolo.com/deployment/concepts/).
+
+  There are 3 endpoints available from this python server.
+  - http://localhost:8000/redis
+  - http://localhost:8000/ksqldb (pull query)
+  - http://localhost:8000/ksqldb-push (push query)
+### 7. Finish
+
+  ```
+  docker-compose down -v
+  ```
 
 ## References:
 - [Confluent Course: KSQLDB 101](https://developer.confluent.io/learn-kafka/ksqldb/intro/)
