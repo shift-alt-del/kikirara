@@ -102,7 +102,7 @@ async def location_ksqldb(server='ksqldb-server', veh_id='*'):
                     f'select * from bus_current where veh_id=\'{veh_id}\';',
                 'streamsProperties': {
                     # https://docs.ksqldb.io/en/latest/operate-and-deploy/high-availability-pull-queries/
-                    # 'ksql.query.pull.max.allowed.offset.lag': '100'
+                    'ksql.query.pull.max.allowed.offset.lag': '100'
                 }
             })).json()
 

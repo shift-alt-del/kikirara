@@ -112,11 +112,11 @@ services:
       KSQL_CONNECT_PLUGIN_PATH: "/usr/share/kafka/plugins"
       KSQL_LOG4J_LOGGERS: "org.apache.zookeeper=DEBUG,org.I0Itec.zkclient=DEBUG,org.reflections=DEBUG"
       # HA
-      # KSQL_KSQL_ADVERTISED_LISTENER: "http://ksqldb-server:8088"
-      # KSQL_KSQL_STREAMS_NUM_STANDBY_REPLICAS: 1
-      # KSQL_KSQL_QUERY_PULL_ENABLE_STANDBY_READS: "true"
-      # KSQL_KSQL_HEARTBEAT_ENABLE: "true"
-      # KSQL_KSQL_LAG_REPORTING_ENABLE: "true"
+      KSQL_KSQL_ADVERTISED_LISTENER: "http://ksqldb-server:8088"
+      KSQL_KSQL_STREAMS_NUM_STANDBY_REPLICAS: 1
+      KSQL_KSQL_QUERY_PULL_ENABLE_STANDBY_READS: "true"
+      KSQL_KSQL_HEARTBEAT_ENABLE: "true"
+      KSQL_KSQL_LAG_REPORTING_ENABLE: "true"
     volumes:
       - ./confluent-hub-components/:/usr/share/kafka/plugins/
     networks:
@@ -153,11 +153,11 @@ services:
       KSQL_CONNECT_PLUGIN_PATH: "/usr/share/kafka/plugins"
       KSQL_LOG4J_LOGGERS: "org.apache.zookeeper=DEBUG,org.I0Itec.zkclient=DEBUG,org.reflections=DEBUG"
       # HA
-      # KSQL_KSQL_ADVERTISED_LISTENER: "http://ksqldb-server2:8088"
-      # KSQL_KSQL_STREAMS_NUM_STANDBY_REPLICAS: 1
-      # KSQL_KSQL_QUERY_PULL_ENABLE_STANDBY_READS: "true"
-      # KSQL_KSQL_HEARTBEAT_ENABLE: "true"
-      # KSQL_KSQL_LAG_REPORTING_ENABLE: "true"
+      KSQL_KSQL_ADVERTISED_LISTENER: "http://ksqldb-server2:8088"
+      KSQL_KSQL_STREAMS_NUM_STANDBY_REPLICAS: 1
+      KSQL_KSQL_QUERY_PULL_ENABLE_STANDBY_READS: "true"
+      KSQL_KSQL_HEARTBEAT_ENABLE: "true"
+      KSQL_KSQL_LAG_REPORTING_ENABLE: "true"
     volumes:
       - ./confluent-hub-components/:/usr/share/kafka/plugins/
     networks:
