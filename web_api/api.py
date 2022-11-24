@@ -7,6 +7,8 @@ import requests
 from starlette.responses import StreamingResponse
 from fastapi.middleware.cors import CORSMiddleware
 
+from psycopg2 import pool
+
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
@@ -15,6 +17,39 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/pg")
+async def location_pg(veh_id='*'):
+    """
+    An API demo how to query latest position from postgres.
+    :return:
+    """
+    cnxpool = pool.SimpleConnectionPool(
+        1, 20, user="postgres-user",
+        password="postgres-pw",
+        host="postgres",
+        port="5432",
+        database="example-db")
+
+    locations = []
+    cnx = cnxpool.getconn()
+    cursor = cnx.cursor()
+    cursor.execute(
+        f'select "VEH_ID", "LOCATION" from bus_current_sr;' if veh_id == '*' else
+        f'select "VEH_ID", "LOCATION" from bus_current_sr where "VEH_ID"=\'{veh_id}\'')
+    for (vid, loc) in cursor.fetchall():
+        locations.append({
+            'veh_id': vid,
+            'loc': loc
+        })
+    cursor.close()
+    cnxpool.putconn(cnx)
+
+    return {
+        'size': len(locations),
+        'data': locations
+    }
 
 
 @app.get("/redis")

@@ -83,14 +83,14 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
   ```
 ### 4. Create table in ksqlDB to calculate latest position.
 
-  Check `./ksqldb/create_table_bus_current.sql`
+  Check `./ksqldb/create_table_bus_current.sql`. The one with `_sr` uses AVRO inside schema-registry which is important for sink connectors needs a schema.
 
   ```
   docker exec -it ksqldb-cli ksql http://ksqldb-server:8088 -f /ksqldb/create_table_bus_current.sql
   ```
 ### 5. Sink connector.
 
-  Check `./connectors/redis-sink.json`
+  Check `./connectors/redis-sink.json` and `./connectors/postgres-sink.json`
 
   ```
   # create recis sink connector
@@ -101,6 +101,15 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
   # show connector status
   curl -X GET http://localhost:8083/connectors/redis-sink/status | jq
+
+  # create postgres sink connector
+  curl -X POST http://localhost:8083/connectors \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    --data "@./connectors/postgres-sink.json" | jq
+
+  # show connector status
+  curl -X GET http://localhost:8083/connectors/postgres-sink/status | jq
   ```
 ### 6. API demo
     
@@ -110,6 +119,7 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
   There are 3 endpoints available from this python server.
   - http://localhost:8000/redis
+  - http://localhost:8000/pg
   - http://localhost:8000/ksqldb (pull query)
   - http://localhost:8000/ksqldb-push (push query)
 

@@ -207,6 +207,22 @@ services:
     networks:
       - demonetwork
 
+  postgres:
+    image: debezium/postgres:12
+    hostname: postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: postgres-user
+      POSTGRES_PASSWORD: postgres-pw
+      POSTGRES_DB: example-db
+    volumes:
+      - ./postgres/custom-config.conf:/etc/postgresql/postgresql.conf
+    command: postgres -c config_file=/etc/postgresql/postgresql.conf
+    networks:
+      - demonetwork
+
   realtime-web-api:
     image: demo/realtime-web-api
     build: ./web_api
