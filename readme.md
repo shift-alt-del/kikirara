@@ -23,21 +23,21 @@ We only focus on the differences between the batch architecture and the realtime
 
 A lot of new Database technologies, this table will highlight the key differences between ksqlDB and online/offline databases. This may not apply to some NoSQL, New SQL, HTAP databases.
 
-| Diffs              | ksqlDB               | Online DB                 | Offline DB                |
-| ------------------ | -------------------- | ------------------------- | ------------------------- |
-| Input              | Kafka                | Insert/Bulk load          | Insert/Bulk load          |
-| Output             | Kafka                | Instant response          | Table or Instant response |
-| Storage            | Kafka, RocksDB       | Data format on local disk | Avro, ORC, Parquet        |
-| Index              | Not needed           | Highly depends on Index   | Not really use Index      |
-| Trigger            | Realtime             | Online request            | Batch job                 |
-| Scalability        | High                 | Low                       | Mid/High                  |
-| QPS                | Low                  | High                      | Low                       |
-| Data scale         | Millions/**Second**  | Millions/Table            | Billions/Table            |
-| Data latency       | Milliseconds         | Milliseconds              | Minutes                   |
-| Query: Select      | Key, Range           | All                       | All                       |
-| Query: Aggregation | Realtime agg         | -                         | Batched agg               |
-| Query: Transaction | -                    | Yes                       | -                         |
-| Query: Join        | Limited/co-partition | Yes (Not recommend)       | Yes                       |
+| Diffs              | ksqlDB                  | Online DB                 | Offline DB                |
+| ------------------ | ----------------------- | ------------------------- | ------------------------- |
+| Input              | Kafka                   | Insert/Bulk load          | Insert/Bulk load          |
+| Output             | Kafka                   | Instant response          | Table or Instant response |
+| Storage            | Kafka, RocksDB          | Data format on local disk | Avro, ORC, Parquet        |
+| Index              | Not needed              | Highly depends on Index   | Not really use Index      |
+| Trigger            | Realtime                | Online request            | Batch job                 |
+| Scalability        | High                    | Low-Mid                   | Mid-High                  |
+| Query QPS          | Low                     | High                      | Low                       |
+| Query scale        | Millions/**Second**     | Millions/Table            | Billions/Table            |
+| Query time         | Endless or Milliseconds | Milliseconds              | Minutes                   |
+| Query: Select      | Key, Range              | All                       | All                       |
+| Query: Aggregation | Realtime agg            | -                         | Batched agg               |
+| Query: Transaction | -                       | Yes                       | -                         |
+| Query: Join        | Limited/co-partition    | Yes (Not recommend)       | Yes                       |
 
 ## Demo
 
