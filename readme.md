@@ -23,21 +23,21 @@ We only focus on the differences between the batch architecture and the realtime
 
 A lot of new Database technologies, this table will highlight the key differences between ksqlDB and online/offline databases. This may not apply to some NoSQL, New SQL, HTAP databases.
 
-| Diffs              | ksqlDB               | Online DB                 | Offline DB                |
-| ------------------ | -------------------- | ------------------------- | ------------------------- |
-| Input              | Kafka                | Insert/Bulk load          | Insert/Bulk load          |
-| Output             | Kafka                | Instant response          | Table or Instant response |
-| Storage            | Kafka, RocksDB       | Data format on local disk | Avro, ORC, Parquet        |
-| Index              | Not needed           | Highly depends on Index   | Not really use Index      |
-| Trigger            | Realtime             | Online request            | Batch job                 |
-| Scalability        | High                 | Low                       | Mid/High                  |
-| QPS                | Low                  | High                      | Low                       |
-| Data scale         | Millions/**Second**  | Millions/Table            | Billions/Table            |
-| Data latency       | Milliseconds         | Milliseconds              | Minutes                   |
-| Query: Select      | Key, Range           | All                       | All                       |
-| Query: Aggregation | Realtime agg         | -                         | Batched agg               |
-| Query: Transaction | -                    | Yes                       | -                         |
-| Query: Join        | Limited/co-partition | Yes (Not recommend)       | Yes                       |
+| Diffs              | ksqlDB                  | Online DB                 | Offline DB                |
+| ------------------ | ----------------------- | ------------------------- | ------------------------- |
+| Input              | Kafka                   | Insert/Bulk load          | Insert/Bulk load          |
+| Output             | Kafka                   | Instant response          | Table or Instant response |
+| Storage            | Kafka, RocksDB          | Data format on local disk | Avro, ORC, Parquet        |
+| Index              | Not needed              | Highly depends on Index   | Not really use Index      |
+| Trigger            | Realtime                | Online request            | Batch job                 |
+| Scalability        | High                    | Low-Mid                   | Mid-High                  |
+| Query QPS          | Low                     | High                      | Low                       |
+| Query scale        | Millions/**Second**     | Millions/Table            | Billions/Table            |
+| Query time         | Endless or Milliseconds | Milliseconds              | Minutes                   |
+| Query: Select      | Key, Range              | All                       | All                       |
+| Query: Aggregation | Realtime agg            | -                         | Batched agg               |
+| Query: Transaction | -                       | Yes                       | -                         |
+| Query: Join        | Limited/co-partition    | Yes (Not recommend)       | Yes                       |
 
 ## Demo
 
@@ -56,6 +56,9 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
   # start services
   docker-compose up -d
+
+  # create topic in multiple partitions
+  kafka-topics --bootstrap-server broker:9092 --create --topic bus_raw --replication-factor 1 --partitions 3
   ```
 ### 2. Source data into Kafka
 
@@ -80,14 +83,14 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
   ```
 ### 4. Create table in ksqlDB to calculate latest position.
 
-  Check `./ksqldb/create_table_bus_current.sql`
+  Check `./ksqldb/create_table_bus_current.sql`. The one with `_sr` uses AVRO inside schema-registry which is important for sink connectors needs a schema.
 
   ```
   docker exec -it ksqldb-cli ksql http://ksqldb-server:8088 -f /ksqldb/create_table_bus_current.sql
   ```
 ### 5. Sink connector.
 
-  Check `./connectors/redis-sink.json`
+  Check `./connectors/redis-sink.json` and `./connectors/postgres-sink.json`
 
   ```
   # create recis sink connector
@@ -98,6 +101,15 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
   # show connector status
   curl -X GET http://localhost:8083/connectors/redis-sink/status | jq
+
+  # create postgres sink connector
+  curl -X POST http://localhost:8083/connectors \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    --data "@./connectors/postgres-sink.json" | jq
+
+  # show connector status
+  curl -X GET http://localhost:8083/connectors/postgres-sink/status | jq
   ```
 ### 6. API demo
     
@@ -107,8 +119,13 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
   There are 3 endpoints available from this python server.
   - http://localhost:8000/redis
+  - http://localhost:8000/pg
   - http://localhost:8000/ksqldb (pull query)
   - http://localhost:8000/ksqldb-push (push query)
+
+  API swagger doc:
+  - http://localhost:8000/docs
+
 ### 7. Finish
 
   ```
