@@ -90,9 +90,7 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
   ```
 ### 5. Sink connector (Redis/Postgres).
 
-  Check `./connectors/redis-sink.json` and `./connectors/postgres-sink.json`
-
-  Redis
+  Redis: `./connectors/redis-sink.json`
   ```
   # create redis sink connector
   curl -X POST http://localhost:8083/connectors \
@@ -104,7 +102,7 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
   curl -X GET http://localhost:8083/connectors/redis-sink/status | jq
   ```
 
-  Postgres
+  Postgres: `./connectors/postgres-sink.json`
   ```
   # create postgres sink connector
   curl -X POST http://localhost:8083/connectors \
