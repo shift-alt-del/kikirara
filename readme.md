@@ -88,12 +88,13 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
   ```
   docker exec -it ksqldb-cli ksql http://ksqldb-server:8088 -f /ksqldb/create_table_bus_current.sql
   ```
-### 5. Sink connector.
+### 5. Sink connector (Redis/Postgres).
 
   Check `./connectors/redis-sink.json` and `./connectors/postgres-sink.json`
 
+  Redis
   ```
-  # create recis sink connector
+  # create redis sink connector
   curl -X POST http://localhost:8083/connectors \
     -H 'Content-Type: application/json' \
     -H 'Accept: application/json' \
@@ -101,7 +102,10 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
   # show connector status
   curl -X GET http://localhost:8083/connectors/redis-sink/status | jq
+  ```
 
+  Postgres
+  ```
   # create postgres sink connector
   curl -X POST http://localhost:8083/connectors \
     -H 'Content-Type: application/json' \
