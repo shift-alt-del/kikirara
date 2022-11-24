@@ -119,7 +119,7 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
 
   The API deployment runs in debug mode, for production deployment please refer to [this Fast API document](https://fastapi.tiangolo.com/deployment/concepts/).
 
-  There are 3 endpoints available from this python server.
+  There are 4 endpoints available from this python server.
   - http://localhost:8000/redis
   - http://localhost:8000/pg
   - http://localhost:8000/ksqldb (pull query)

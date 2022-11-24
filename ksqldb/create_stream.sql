@@ -20,7 +20,7 @@ as select
   extractjsonfield(payload, '$.VP.desi') as route_num, 
   cast(extractjsonfield(payload, '$.VP.dir') as int) as direction_id, 
   cast(extractjsonfield(payload, '$.VP.oper') as int) as operator_id, 
-  cast(extractjsonfield(payload, '$.VP.veh') as int) as veh_id, 
+  cast(extractjsonfield(payload, '$.VP.veh') as string) as veh_id, 
   cast(extractjsonfield(payload, '$.VP.tsi') as bigint) as time_int, 
   cast(extractjsonfield(payload, '$.VP.spd') as double) as speed, 
   cast(extractjsonfield(payload, '$.VP.hdg') as int) as heading, 
@@ -35,5 +35,5 @@ as select
   extractjsonfield(payload, '$.VP.loc') as loc_src, 
   cast(extractjsonfield(payload, '$.VP.occu') as int) as occupancy 
 from bus_converted 
-partition by cast(extractjsonfield(payload, '$.VP.veh') as int) 
+partition by cast(extractjsonfield(payload, '$.VP.veh') as string) 
 emit changes;

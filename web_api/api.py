@@ -99,10 +99,10 @@ async def location_ksqldb(server='ksqldb-server', veh_id='*'):
             {
                 'ksql':
                     f'select * from bus_current;' if veh_id == '*' else
-                    f'select * from bus_current where veh_id={veh_id};',
+                    f'select * from bus_current where veh_id=\'{veh_id}\';',
                 'streamsProperties': {
                     # https://docs.ksqldb.io/en/latest/operate-and-deploy/high-availability-pull-queries/
-                    'ksql.query.pull.max.allowed.offset.lag': '100'
+                    # 'ksql.query.pull.max.allowed.offset.lag': '100'
                 }
             })).json()
 
@@ -145,7 +145,7 @@ async def location_ksqldb_push(server='ksqldb-server', veh_id='*'):
                     {
                         'sql':
                             f'select * from bus_current emit changes;' if veh_id == '*' else
-                            f'select * from bus_current where veh_id = {veh_id} emit changes;',
+                            f'select * from bus_current where veh_id = \'{veh_id}\' emit changes;',
                         'streamsProperties': {}
                     })) as r:
             for chunk in r.iter_content(chunk_size=1024 * 8):
