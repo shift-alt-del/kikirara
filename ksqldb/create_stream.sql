@@ -14,7 +14,7 @@ where random() >= 0.9
 emit changes;
 
 -- extract data from string.
-create stream bus_extracted with (kafka_topic='bus_extracted', timestamp='time_int') 
+create stream bus_extracted with (kafka_topic='bus_extracted') 
 as select 
   split(as_value(key), '/')[12] as headsign, 
   extractjsonfield(payload, '$.VP.desi') as route_num, 

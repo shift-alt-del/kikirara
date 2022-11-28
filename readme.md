@@ -113,20 +113,34 @@ Using [vehicle-positions](https://digitransit.fi/en/developers/apis/4-realtime-a
   # show connector status
   curl -X GET http://localhost:8083/connectors/postgres-sink/status | jq
   ```
+
+  Postgres Suppressed: `./connectors/postgres-sink-10s.json`
+  ```
+  # create postgres sink connector with suppress
+  curl -X POST http://localhost:8083/connectors \
+    -H 'Content-Type: application/json' \
+    -H 'Accept: application/json' \
+    --data "@./connectors/postgres-sink-10s.json" | jq
+
+  # show connector status
+  curl -X GET http://localhost:8083/connectors/postgres-sink-10s/status | jq
+  ```
+
 ### 6. API demo
     
   Check inside `./web_api/api.py`.
 
   The API deployment runs in debug mode, for production deployment please refer to [this Fast API document](https://fastapi.tiangolo.com/deployment/concepts/).
 
-  There are 4 endpoints available from this python server.
-  - http://localhost:8000/redis
-  - http://localhost:8000/pg
-  - http://localhost:8000/ksqldb (pull query)
-  - http://localhost:8000/ksqldb-push (push query)
-
-  API swagger doc:
-  - http://localhost:8000/docs
+  Endpoints with different parameters. See full Swagger document: http://localhost:8000/docs
+  
+  | Endpoint                                    | DB             | Desc                                                     |
+  | ------------------------------------------- | -------------- | -------------------------------------------------------- |
+  | http://localhost:8000/redis                 | Redis          | Redis connector, High update traffic                     |
+  | http://localhost:8000/pg/bus_current_sr     | Postgres       | JDBC connector, High update traffic                      |
+  | http://localhost:8000/pg/bus_current_sr_10s | Postgres       | JDBC connector, Low update traffic, suppressed by kslqdb |
+  | http://localhost:8000/ksqldb                | ksqlDB/RocksDB | Latest status from RocksDB                               |
+  | http://localhost:8000/ksqldb-push           | ksqlDB/Kafka   | Streaming API                                            |
 
 ### 7. Finish
 
