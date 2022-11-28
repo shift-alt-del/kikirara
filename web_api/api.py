@@ -19,8 +19,8 @@ app.add_middleware(
 )
 
 
-@app.get("/pg")
-async def location_pg(veh_id='*'):
+@app.get("/pg/{table_name}")
+async def location_pg(table_name, veh_id='*'):
     """
     An API demo how to query latest position from postgres.
     :return:
@@ -36,8 +36,8 @@ async def location_pg(veh_id='*'):
     cnx = cnxpool.getconn()
     cursor = cnx.cursor()
     cursor.execute(
-        f'select "VEH_ID", "LOCATION" from bus_current_sr;' if veh_id == '*' else
-        f'select "VEH_ID", "LOCATION" from bus_current_sr where "VEH_ID"=\'{veh_id}\'')
+        f'select "VEH_ID", "LOCATION" from {table_name};' if veh_id == '*' else
+        f'select "VEH_ID", "LOCATION" from {table_name} where "VEH_ID"=\'{veh_id}\'')
     for (vid, loc) in cursor.fetchall():
         locations.append({
             'veh_id': vid,

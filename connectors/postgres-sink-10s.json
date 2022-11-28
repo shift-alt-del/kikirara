@@ -1,0 +1,19 @@
+{
+    "name": "postgres-sink-10s",
+    "config": {
+        "connector.class": "io.confluent.connect.jdbc.JdbcSinkConnector",
+        "connection.url": "jdbc:postgresql://postgres:5432/example-db",
+        "connection.user": "postgres-user",
+        "connection.password": "postgres-pw",
+        "key.converter": "org.apache.kafka.connect.storage.StringConverter",
+        "value.converter": "io.confluent.connect.avro.AvroConverter",
+        "value.converter.schema.registry.url": "http://schema-registry:8081",
+        "topics": "bus_current_sr_10s",
+        "insert.mode": "upsert",
+        "fields.whitelist": "LOCATION",
+        "pk.mode": "record_value",
+        "pk.fields": "VEH_ID",
+        "auto.create": "true",
+        "auto.evolve": "true"
+    }
+}
